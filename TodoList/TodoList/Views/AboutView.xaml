@@ -1,0 +1,19 @@
+﻿<UserControl x:Class="TodoList.Views.AboutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TodoList.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <StackPanel Margin="10,10">
+            <TextBlock Text="关于作者" FontSize="26"/>
+            <DockPanel LastChildFill="False">
+                <TextBlock Margin="10,10" Text="git:"/>
+                <TextBlock Margin="0,10">
+                    <Hyperlink NavigateUri="https://github.com/JasonLican"><Run Text="https://github.com/JasonLican" /></Hyperlink></TextBlock>
+            </DockPanel>
+        </StackPanel> 
+    </Grid>
+</UserControl>

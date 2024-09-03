@@ -23,5 +23,10 @@ namespace TodoList.Common.ModelDto
             get { return content; }
             set { content = value; OnPropertyChanged(); }
         }
+        public int Status
+        {
+            get { return status; }
+            set { status = value; OnPropertyChanged(); }
+        }
     }
 }

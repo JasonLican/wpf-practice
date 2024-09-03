@@ -9,7 +9,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TodoList.Common;
 using TodoList.Common.Events;
+using TodoList.Extension;
 using TodoList.Views;
 
 namespace TodoList
@@ -19,9 +21,11 @@ namespace TodoList
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(IEventAggregator aggregator)
+        private readonly IDialogHostService _dialogHostService;
+        public MainWindow(IEventAggregator aggregator, IDialogHostService dialogHost)
         {
             InitializeComponent();
+            _dialogHostService = dialogHost;
             aggregator.Resgiter(arg =>
             {
                 DialogHost.IsOpen = arg.IsOpen;
@@ -40,7 +44,14 @@ namespace TodoList
                 else
                     this.WindowState = WindowState.Maximized;
             };
-            btnClose.Click += (s, e) => { this.Close(); };
+            btnClose.Click += async (s, e) =>
+            {
+
+                var dialogResult = await dialogHost.Question("温馨提示", "确认退出？");
+                if (dialogResult.Result != Prism.Services.Dialogs.ButtonResult.OK) return;
+                this.Close();
+
+            };
             colorZone.MouseMove += (s, e) =>
             {
                 if (e.LeftButton == MouseButtonState.Pressed)

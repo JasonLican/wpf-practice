@@ -6,9 +6,13 @@
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:local="clr-namespace:TodoList.Views"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:cv="clr-namespace:TodoList.Common.Converters"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
+    <UserControl.Resources>
+        <cv:IntTovisibileConverter x:Key="IntToVisibility" />
+    </UserControl.Resources>
     <md:DrawerHost>
         <md:DrawerHost  IsRightDrawerOpen="{Binding IsRightDrawerOpen}">
             <md:DrawerHost.RightDrawerContent>
@@ -28,8 +32,8 @@
                                   Margin="5"
                                   SelectedIndex="{Binding CurrentDto.Status}"
                                   VerticalAlignment="Center">
-                            <ComboBoxItem>已完成</ComboBoxItem>
                             <ComboBoxItem>待办</ComboBoxItem>
+                            <ComboBoxItem>已完成</ComboBoxItem>
                         </ComboBox>
                     </StackPanel>
                     <TextBox Margin="20"
@@ -44,6 +48,8 @@
                              md:TextFieldAssist.HasClearButton="True"
                              DockPanel.Dock="Top" />
                     <Button Margin="20"
+                            Command="{Binding ExcuteCommand}"
+                            CommandParameter="Save"
                             Content="添加"
                             DockPanel.Dock="Top" />
                 </DockPanel>
@@ -62,15 +68,14 @@
                              md:TextFieldAssist.HasClearButton="True">
                         <TextBox.InputBindings>
                             <KeyBinding Key="Enter"
-                                        Command="{Binding ExcuteCommand}" 
-                                        CommandParameter="Search"
-                                        />
+                                        Command="{Binding ExcuteCommand}"
+                                        CommandParameter="Search" />
                         </TextBox.InputBindings>
                     </TextBox>
                     <TextBlock Text="筛选:"
                                VerticalAlignment="Center"
                                Margin="10,0" />
-                    <ComboBox SelectedIndex="0"
+                    <ComboBox SelectedIndex="{Binding SelectIndex}"
                               Width="80">
                         <ComboBoxItem>全部</ComboBoxItem>
                         <ComboBoxItem>待办</ComboBoxItem>
@@ -82,7 +87,14 @@
                         Command="{Binding ExcuteCommand}"
                         CommandParameter="Add"
                         Margin="10,5" />
-                <ScrollViewer Grid.Row="1">
+                <StackPanel Grid.Row="1"
+                            Visibility="{Binding ToDoDtos.Count,Converter={StaticResource IntToVisibility}}">
+                    <TextBlock TextAlignment="Center" FontSize="20" Margin="0,200" Text="No Records"/>
+                    <Image Source="/Images/no.jpg" Width="120" Height="120"></Image>
+                </StackPanel>
+                
+                
+                <ScrollViewer Grid.Row="1" >
                     <ItemsControl HorizontalAlignment="Center"
                                   ItemsSource="{Binding ToDoDtos}">
                         <ItemsControl.ItemsPanel>
@@ -108,11 +120,30 @@
                                             <RowDefinition />
                                         </Grid.RowDefinitions>
                                         <Border Grid.RowSpan="2"
-                                                Background="Green"
-                                                CornerRadius="3" />
+                                                CornerRadius="3">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}"
+                                                                     Value="0">
+                                                            <Setter Property="Background"
+                                                                    Value="#009900" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Status}"
+                                                                     Value="1">
+                                                            <Setter Property="Background"
+                                                                    Value="#0066FF" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
                                         <md:PopupBox HorizontalAlignment="Right"
                                                      Panel.ZIndex="1">
-                                            <Button Content="删除" />
+                                            <Button Content="删除"
+                                                    CommandParameter="{Binding}"
+                                                    Command="{Binding DataContext.DelCommand, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ItemsControl}}"
+                                                    />
                                         </md:PopupBox>
                                         <TextBlock Padding="10,5"
                                                    FontSize="15"

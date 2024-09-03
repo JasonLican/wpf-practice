@@ -7,17 +7,17 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TodoList.Common;
 using TodoList.Common.Models;
 using TodoList.Extension;
 
 namespace TodoList.ViewModels
 {
-    public class MainViewModel : BindableBase
+    public class MainViewModel : BindableBase, IConfigureService
     {
         public MainViewModel(IRegionManager regionManager)
         {
             menuBars = new ObservableCollection<MenuBar>();
-            CreateMenuBars();
             NavigateCommand = new DelegateCommand<MenuBar>(Navigate);
             this.regionManager = regionManager;
 
@@ -66,5 +66,10 @@ namespace TodoList.ViewModels
             menuBars.Add(new MenuBar() { Icon = "CogOutline", Title = "设置", NameSpace = "SettingsView" });
         }
 
+        public void Configure()
+        {
+            CreateMenuBars();
+            regionManager.Regions[PrismManager.MainViewRegionName].RequestNavigate("IndexView");
+        }
     }
 }
